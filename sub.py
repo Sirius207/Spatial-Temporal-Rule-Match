@@ -20,8 +20,8 @@ def save_to_postgre(bucket_data):
     cursor = conn.cursor()
     print "Connected!\n"
 
-    cursor.execute("INSERT INTO buckets_origin_data (bucket_id, longitude, latitude, created_at) \
-	VALUES(%s, %s, %s, %s);", (bucket_data['bucket_ID'], bucket_data['longitude'], bucket_data['latitude'], bucket_data['created_at']) )
+    cursor.execute("INSERT INTO buckets_origin_data (bucket_id, longitude, latitude, created_at, more) \
+	VALUES(%s, %s, %s, %s, %s);", (bucket_data['bucket_ID'], bucket_data['longitude'], bucket_data['latitude'], bucket_data['created_at'], json.dumps(bucket_data['more'])) )
     conn.commit()
     print "Success\n"  
 
