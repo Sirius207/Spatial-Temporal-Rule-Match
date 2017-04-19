@@ -1,4 +1,4 @@
-import sys, os, time, signal
+import sys, os, time, signal,json
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import paho.mqtt.client as mqtt
@@ -8,6 +8,12 @@ mqtt_looping = False
 
 TOPIC_ROOT = "test"
 
+
+def save_to_postgre(payload):
+    bucket_data = json.loads(payload)
+    print bucket_data['more']['type']
+    
+
 def on_connect(mq, userdata, rc, _):
     # subscribe when connected.
     mq.subscribe(TOPIC_ROOT + '/#')
@@ -16,6 +22,7 @@ def on_message(mq, userdata, msg):
     print "topic: %s" % msg.topic
     print "payload: %s" % msg.payload
     print "qos: %d" % msg.qos
+    save_to_postgre(msg.payload)
 
 def mqtt_client_thread():
     global client, mqtt_looping
