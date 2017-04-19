@@ -1,4 +1,4 @@
-import sys, os, time, signal,json
+import sys, os, time, signal, json, psycopg2 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import paho.mqtt.client as mqtt
@@ -9,10 +9,28 @@ mqtt_looping = False
 TOPIC_ROOT = "test"
 
 
-def save_to_postgre(payload):
+def save_to_postgre(bucket_data):
+    conn_string = "host='localhost' dbname='buckets_data' user='bucket_user' password='sirius207'"
+    print "Connecting to database\n	->%s" % (conn_string)
+ 
+    # get a connection, if a connect cannot be made an exception will be raised here
+    conn = psycopg2.connect(conn_string)
+
+
+    cursor = conn.cursor()
+    print "Connected!\n"
+
+    cursor.execute("INSERT INTO buckets_origin_data (bucket_id, longitude, latitude, created_at) \
+	VALUES(%s, %s, %s, %s);", (bucket_data['bucket_ID'], bucket_data['longitude'], bucket_data['latitude'], bucket_data['created_at']) )
+    conn.commit()
+    print "Success\n"  
+
+
+def save_data(payload):
     bucket_data = json.loads(payload)
     print bucket_data['more']['type']
-    
+    save_to_postgre(bucket_data)
+        
 
 def on_connect(mq, userdata, rc, _):
     # subscribe when connected.
@@ -22,7 +40,7 @@ def on_message(mq, userdata, msg):
     print "topic: %s" % msg.topic
     print "payload: %s" % msg.payload
     print "qos: %d" % msg.qos
-    save_to_postgre(msg.payload)
+    save_data(msg.payload)
 
 def mqtt_client_thread():
     global client, mqtt_looping
