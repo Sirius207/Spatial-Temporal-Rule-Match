@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 client = None
 mqtt_looping = False
 
-TOPIC_ROOT = "test"
+TOPIC_ROOT = "STevent"
 
 
 def save_to_postgre(bucket_data):
