@@ -6,13 +6,24 @@ import psycopg2
 import json
 from math import radians, cos, sin, asin, sqrt
 
+from config import CONFIG
+TOPIC = CONFIG['TOPIC']
+DISTANCE = CONFIG['DISTANCE']
+TIME_RATE = CONFIG['TIME_RATE']
+
+from config import DBCONFIG
+HOST = DBCONFIG['HOST']
+DBNAME = DBCONFIG['DBNAME']
+USER = DBCONFIG['USER']
+PASSWORD = DBCONFIG['PASSWORD']
+
 EventDict = dict()
 DistanceDict = dict()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, rc):
     client.subscribe("test")
-    client.subscribe("STevent")
+    client.subscribe(TOPIC)
 
 def on_publish(client, userdata, mid):
     print("mid: "+str(mid))
@@ -125,14 +136,13 @@ def on_message(client, userdata, msg):
 
 	if msg.topic=='test':
 		print str(msg.payload)
-	elif msg.topic=='STevent':
+	elif msg.topic==TOPIC:
 		# Rule
-		T = 1
-		D = 1000
-		N = 2
+		D = DISTANCE
+		N = TIME_RATE
 
 		# Initial
-		global EventDict
+		global EventDic
 		global DistanceDict
 		RedIndex = set()
 		BlackIndex = set()
@@ -301,7 +311,7 @@ def on_message(client, userdata, msg):
 
 
 
-conn_string = "host='localhost' dbname='buckets_data' user='bucket_user' password='sirius207'"
+conn_string = "host="+HOST+" dbname="+DBNAME+" user="+USER+" password="+PASSWORD
 print "Connecting to database\n	->%s" % (conn_string)
 conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
