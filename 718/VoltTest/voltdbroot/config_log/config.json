@@ -1,0 +1,8 @@
+{
+    "log4jDst": [{
+        "format": "'.'yyyy-MM-dd",
+        "path": "/home/yenkuanlee/NCKU/STindex-TDN/test/log/volt.log"
+    }],
+    "pid": 26258,
+    "workingDir": "/home/yenkuanlee/NCKU/STindex-TDN/test"
+}
