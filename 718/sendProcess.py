@@ -6,9 +6,10 @@ import datetime, sched
 
 # from bucket717 import bucketRecord
 import urllib2
-POSITION_URL = 'http://report.denguefever.tw/bucket/'
-DAYS = 7
-UPLIMIT = 90
+from config import CONFIG
+POSITION_URL = CONFIG['POSITION_URL']
+DAYS = CONFIG['TIMELINE']
+UPLIMIT = CONFIG['UPLIMIT']
 INTERVAL = 86400 # every second  
 
 #

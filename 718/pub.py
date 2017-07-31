@@ -14,7 +14,7 @@ while True:
 Tlist.sort(key=lambda tup: tup[3]) 
 
 for x in Tlist:
-    print x[0],x[1],x[2], x[4]
+    print (x[0],x[1],x[2], x[4])
 
     os.system("python Mmqtt.py localhost STevent "+x[0]+"#"+x[1]+"#"+x[2]+"#"+"'" +x[4] + "'")
     time.sleep(1)

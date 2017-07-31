@@ -125,18 +125,18 @@ def on_message(client, userdata, msg):
 			del MccKey[PrevSet]
 	
 		if (isNotSubset):
-			print 'save new mcc'
+			print ('save new mcc')
 			MccSet.add(frozenset(NewSet))
 			MccKey[frozenset(NewSet)] = list(Key)
 
 
 	if msg.topic=='test':
-		print str(msg.payload)
+		print (str(msg.payload))
 	elif msg.topic==TOPIC:
 		# Rule
 		D = DISTANCE
 		N = TIME_RATE
-		print str(msg.payload)
+		print (str(msg.payload))
 		# Initial
 		global EventDic
 		global DistanceDict
@@ -227,7 +227,7 @@ def on_message(client, userdata, msg):
 						continue
 					Mcc[(y,x,Eid)] = set([y,x,Eid])	# 3-point Mcc
 
-		print "KEVIN Eid : "+str(Eid)
+		print ("KEVIN Eid : "+str(Eid))
 		#print "KEVIN DistanceDict : "
 		#print DistanceDict
 		#print "KEVIN NEIGHBER : "
@@ -296,24 +296,24 @@ def on_message(client, userdata, msg):
 	VALUES(%s, %s, %s, %s, %s, %s);", (more['bucket_id'], Lon, Lat, Time, list(Neighber), json.dumps(more) ) )
 		conn.commit()
 		
-		print 'Save to DB: '
-		print Eid
+		print ('Save to DB: ')
+		print (Eid)
 		for mcc in MccSet:
-			print MccKey[mcc]
-			print list(mcc)
+			print (MccKey[mcc])
+			print (list(mcc))
 			if (len(mcc) > POINT_COUNTS):
 				cursor.execute("INSERT INTO mcc (mcc_keys, mcc_lists, created_at, distance, timeline, point_counts) \
 	VALUES(%s, %s, %s, %s, %s, %s);", (MccKey[mcc], list(mcc) , Time, DISTANCE, TIMELINE, POINT_COUNTS) )
-    			conn.commit()
+				conn.commit()
 
 
 
 
 conn_string = "host="+HOST+" dbname="+DBNAME+" user="+USER+" password="+PASSWORD
-print "Connecting to database\n	->%s" % (conn_string)
+print ("Connecting to database\n	->%s" % (conn_string))
 conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
-print "Connected!\n"
+print ("Connected!\n")
 
 client = mqtt.Client()
 client.on_connect = on_connect
