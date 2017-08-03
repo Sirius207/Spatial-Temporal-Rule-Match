@@ -12,6 +12,7 @@ TIME_RATE = CONFIG['TIME_RATE']
 DISTANCE = CONFIG['DISTANCE']
 TIMELINE = CONFIG['TIMELINE']
 POINT_COUNTS = CONFIG['POINT_COUNTS']
+UPLIMIT = CONFIG['UPLIMIT']
 
 from config import DBCONFIG
 HOST = DBCONFIG['HOST']
@@ -292,9 +293,9 @@ def on_message(client, userdata, msg):
 		EventDict[Eid]["Time"] = Time
 		EventDict[Eid]["Neighber"] = Neighber
 		EventDict[Eid]["Mcc"] = Mcc
-		cursor.execute("INSERT INTO event_dict (id, longitude, latitude, created_at, neighbors, more) \
-	VALUES(%s, %s, %s, %s, %s, %s);", (more['bucket_id'], Lon, Lat, Time, list(Neighber), json.dumps(more) ) )
-		conn.commit()
+	# 	cursor.execute("INSERT INTO event_dict (id, longitude, latitude, created_at, neighbors, more) \
+	# VALUES(%s, %s, %s, %s, %s, %s);", (more['bucket_id'], Lon, Lat, Time, list(Neighber), json.dumps(more) ) )
+	# 	conn.commit()
 		
 		print ('Save to DB: ')
 		print (Eid)
@@ -302,8 +303,8 @@ def on_message(client, userdata, msg):
 			print (MccKey[mcc])
 			print (list(mcc))
 			if (len(mcc) > POINT_COUNTS):
-				cursor.execute("INSERT INTO mcc (mcc_keys, mcc_lists, created_at, distance, timeline, point_counts) \
-	VALUES(%s, %s, %s, %s, %s, %s);", (MccKey[mcc], list(mcc) , Time, DISTANCE, TIMELINE, POINT_COUNTS) )
+				cursor.execute("INSERT INTO mccs (mcc_keys, mcc_lists, created_at, distance, timeline, point_counts, up_limit) \
+	VALUES(%s, %s, %s, %s, %s, %s, %s);", (MccKey[mcc], list(mcc) , Time, DISTANCE, TIMELINE, POINT_COUNTS, UPLIMIT) )
 				conn.commit()
 
 
