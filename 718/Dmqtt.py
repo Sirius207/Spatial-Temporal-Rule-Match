@@ -113,6 +113,7 @@ def GetNewMcc(p,OldMcc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
 	def TempSaveMcc(Key, NewSet):
+		'''Remove Subset of MCC '''
 		isNotSubset = True
 		PopSet = set()
 		for PrevSet in MccSet:
@@ -126,9 +127,36 @@ def on_message(client, userdata, msg):
 			del MccKey[PrevSet]
 	
 		if (isNotSubset):
-			print ('save new mcc')
+			#print ('save new mcc')
 			MccSet.add(frozenset(NewSet))
 			MccKey[frozenset(NewSet)] = list(Key)
+
+	def CalMccCenter(mcc):
+		'''Calculate the center position of Mcc '''
+		if len(mcc) == 2:
+			center = list()
+			center.append( (EventDict[mcc[0]]["Lon"] + EventDict[mcc[1]]["Lon"]) / 2 )
+			center.append( (EventDict[mcc[0]]["Lat"] + EventDict[mcc[1]]["Lat"]) / 2 )
+			print (center)
+			return center
+		else:
+			return CalMccCenterByThreePoints(mcc)
+
+	def CalMccCenterByThreePoints(mcc):
+		'''Calculate Mcc Center By Three Points'''
+		center = list()
+		ma = (EventDict[mcc[1]]["Lat"] - EventDict[mcc[0]]["Lat"]) / (EventDict[mcc[1]]["Lon"] - EventDict[mcc[0]]["Lon"])
+		mb = (EventDict[mcc[2]]["Lat"] - EventDict[mcc[1]]["Lat"]) / (EventDict[mcc[2]]["Lon"] - EventDict[mcc[1]]["Lon"])
+		centerLon = (ma*mb*(EventDict[mcc[0]]["Lat"] - EventDict[mcc[2]]["Lat"]) + mb*(EventDict[mcc[0]]["Lon"] + EventDict[mcc[1]]["Lon"]) \
+								- ma*(EventDict[mcc[1]]["Lon"] + EventDict[mcc[2]]["Lon"]) ) / (2*(mb-ma))
+
+		centerLat = -(1/ma) * (centerLon - (EventDict[mcc[0]]["Lon"] + EventDict[mcc[1]]["Lon"])/2) \
+								+ (EventDict[mcc[1]]["Lat"] + EventDict[mcc[0]]["Lat"])/2
+
+		center.append(centerLon)
+		center.append(centerLat)
+		print str(center[1]) + ',' + str(center[0])
+		return center
 
 
 	if msg.topic=='test':
@@ -297,14 +325,17 @@ def on_message(client, userdata, msg):
 	# VALUES(%s, %s, %s, %s, %s, %s);", (more['bucket_id'], Lon, Lat, Time, list(Neighber), json.dumps(more) ) )
 	# 	conn.commit()
 		
-		print ('Save to DB: ')
 		print (Eid)
 		for mcc in MccSet:
-			print (MccKey[mcc])
-			print (list(mcc))
 			if (len(mcc) > POINT_COUNTS):
-				cursor.execute("INSERT INTO mccs (mcc_keys, mcc_lists, created_at, distance, timeline, point_counts, up_limit) \
-	VALUES(%s, %s, %s, %s, %s, %s, %s);", (MccKey[mcc], list(mcc) , Time, DISTANCE, TIMELINE, POINT_COUNTS, UPLIMIT) )
+				print ('Save to DB: ')
+				print (MccKey[mcc])
+				print (list(mcc))
+				# calculate the center of mcc
+				center = CalMccCenter(MccKey[mcc])
+				# save mcc to db
+				cursor.execute("INSERT INTO mccs (mcc_keys, mcc_lists, created_at, distance, timeline, point_counts, up_limit, center) \
+	VALUES(%s, %s, %s, %s, %s, %s, %s, %s);", (MccKey[mcc], list(mcc) , Time, DISTANCE, TIMELINE, POINT_COUNTS, UPLIMIT, list(center)) )
 				conn.commit()
 
 
