@@ -185,6 +185,11 @@ def on_message(client, userdata, msg):
 		# Eid = long(str(time.time()).replace(".",""))
 		Eid = more['bucket_id']
 
+		# Pass same point
+		if Eid in EventDict:
+			print 'point exist'
+			return
+
 		# Generate Red, Black and Neighber
 		PopList = list()
 		for x in EventDict:
