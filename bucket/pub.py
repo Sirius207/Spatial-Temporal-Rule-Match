@@ -14,7 +14,7 @@ point_list.sort(key=lambda tup: tup[3])
 
 for value in point_list:
     print (value[0], value[1], value[2], value[4])
-    os.system("python Mmqtt.py localhost STevent "+value[0]+"#"+value[1]+"#"+value[2]+"#"+"'" +value[4] + "'")
+    os.system("python Mmqtt.py iot.eclipse.org ncku/net/STevent "+value[0]+"#"+value[1]+"#"+value[2]+"#"+"'" +value[4] + "'")
     time.sleep(1)
 bucketFile.close()
 

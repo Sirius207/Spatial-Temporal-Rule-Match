@@ -10,6 +10,6 @@ client = paho.Client()
 client.on_publish = on_publish
 client.connect(sys.argv[1], 1883)
 
-auth = {'username':'sirius207', 'password': 'sirius207'}
+#auth = {'username':'sirius207', 'password': 'sirius207'}
 
 (rc, mid) = client.publish(sys.argv[2], sys.argv[3], qos=0)
