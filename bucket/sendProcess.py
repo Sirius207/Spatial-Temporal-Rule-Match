@@ -7,6 +7,8 @@ import datetime, sched
 # from bucket717 import bucketRecord
 import urllib2
 from config import CONFIG
+BROKER_ADDRESS = CONFIG['BROKER_ADDRESS']
+TOPIC = CONFIG['TOPIC']
 POSITION_URL = CONFIG['POSITION_URL']
 DAYS = CONFIG['TIMELINE']
 UPLIMIT = CONFIG['UPLIMIT']
@@ -36,6 +38,7 @@ def parse_bucket_position():
 def parse_bucket_data():
     ''' Get API Bucket Data'''
     StartDate = (datetime.datetime.now() - datetime.timedelta(days=DAYS)).strftime("%Y-%m-%d")
+    StartDate = '2017-07-20'
     URL = 'http://report.denguefever.tw/bucket-record/?start=' \
         + StartDate + '&county=%E5%8F%B0%E5%8D%97'
     content = urllib2.urlopen(URL).read()
@@ -76,12 +79,12 @@ def send():
 
     for value in point_list:
         print (value[0], value[1], value[2], value[4])
-        os.system("python Mmqtt.py localhost STevent "+value[0]+"#"+value[1]+"#"+value[2]+"#"+"'" +value[4] + "'")
+        os.system("python Mmqtt.py " + BROKER_ADDRESS + " " + TOPIC + " " + value[0]+"#"+value[1]+"#"+value[2]+"#"+"'" +value[4] + "'")
         time.sleep(1)
     bucketFile.close()
 
 #
-# 
+# Run PerodicScheduler
 #
 def periodic_event():
     ''' periodic process ''' 

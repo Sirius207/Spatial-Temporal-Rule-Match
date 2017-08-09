@@ -7,6 +7,7 @@ import json
 from math import radians, cos, sin, asin, sqrt
 
 from config import CONFIG
+BROKER_ADDRESS = CONFIG['BROKER_ADDRESS']
 TOPIC = CONFIG['TOPIC']
 TIME_RATE = CONFIG['TIME_RATE']
 DISTANCE = CONFIG['DISTANCE']
@@ -355,5 +356,5 @@ print ("Connected!\n")
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect("iot.eclipse.org", 1883, 60)
+client.connect(BROKER_ADDRESS, 1883, 60)
 client.loop_forever()

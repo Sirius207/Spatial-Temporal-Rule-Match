@@ -2,6 +2,11 @@ import datetime
 import sys
 import os
 import time
+
+from config import CONFIG
+BROKER_ADDRESS = CONFIG['BROKER_ADDRESS']
+TOPIC = CONFIG['TOPIC']
+
 bucketFile = open('bucket.dat', 'r')
 point_list = list()
 while True:
@@ -14,7 +19,7 @@ point_list.sort(key=lambda tup: tup[3])
 
 for value in point_list:
     print (value[0], value[1], value[2], value[4])
-    os.system("python Mmqtt.py iot.eclipse.org ncku/net/STevent "+value[0]+"#"+value[1]+"#"+value[2]+"#"+"'" +value[4] + "'")
+    os.system("python Mmqtt.py " + BROKER_ADDRESS +" "+TOPIC +" "+value[0]+"#"+value[1]+"#"+value[2]+"#"+"'" +value[4] + "'")
     time.sleep(1)
 bucketFile.close()
 
