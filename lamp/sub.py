@@ -6,35 +6,35 @@ import paho.mqtt.client as mqtt
 client = None
 mqtt_looping = False
 
-TOPIC_ROOT = "STevent"
+from config import CONFIG
+BROKER_ADDRESS = CONFIG['BROKER_ADDRESS']
+TOPIC = CONFIG['TOPIC']
+from config import DBCONFIG
+HOST = DBCONFIG['HOST']
+DBNAME = DBCONFIG['DBNAME']
+USER = DBCONFIG['USER']
+PASSWORD = DBCONFIG['PASSWORD']
 
+conn_string = "host="+HOST+" dbname="+DBNAME+" user="+USER+" password="+PASSWORD
+conn = psycopg2.connect(conn_string)
+cursor = conn.cursor()
+print ("Connected!\n")
 
-def save_to_postgre(bucket_data):
-    conn_string = "host='localhost' dbname='buckets_data' user='bucket_user' password='sirius207'"
-    print "Connecting to database\n	->%s" % (conn_string)
- 
+def save_to_postgre(lamp_data):
     # get a connection, if a connect cannot be made an exception will be raised here
-    conn = psycopg2.connect(conn_string)
-
-
-    cursor = conn.cursor()
-    print "Connected!\n"
-
-    cursor.execute("INSERT INTO buckets_origin_data (bucket_id, longitude, latitude, created_at, more) \
-	VALUES(%s, %s, %s, %s, %s);", (bucket_data['bucket_ID'], bucket_data['longitude'], bucket_data['latitude'], bucket_data['created_at'], json.dumps(bucket_data['more'])) )
+    cursor.execute("INSERT INTO lamps (id, created_at, more) \
+	    VALUES(%s, %s, %s);", (lamp_data['id'], lamp_data['created_at'], json.dumps(lamp_data['more'])) )
     conn.commit()
-    print "Success\n"  
-
+    print "save Success\n"
 
 def save_data(payload):
-    bucket_data = json.loads(payload)
-    print bucket_data['more']['type']
-    save_to_postgre(bucket_data)
-        
+    lamp_data = json.loads(payload)
+    print lamp_data['more']['type']
+    save_to_postgre(lamp_data)
 
 def on_connect(mq, userdata, rc, _):
     # subscribe when connected.
-    mq.subscribe(TOPIC_ROOT + '/#')
+    mq.subscribe(TOPIC + '/#')
 
 def on_message(mq, userdata, msg):
     print "topic: %s" % msg.topic
@@ -86,7 +86,7 @@ def stop_all(*args):
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, stop_all)
     signal.signal(signal.SIGQUIT, stop_all)
-    signal.signal(signal.SIGINT,  stop_all)  # Ctrl-C
+    signal.signal(signal.SIGINT, stop_all) # Ctrl-C
 
     mqtt_client_thread()
 
