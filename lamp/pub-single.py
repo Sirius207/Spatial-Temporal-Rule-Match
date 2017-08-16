@@ -11,9 +11,9 @@ def json_serial(obj):
     raise TypeError ("Type not serializable")
 
 TEMP = {
-	   'id':"1",
+	   'id': '1',
 	   'created_at': datetime.now(),
-	   'more':{"type":"json"},
+	   'counts': '5'
 }
 
 # publish a message then disconnect.

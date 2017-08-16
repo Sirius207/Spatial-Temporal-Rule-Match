@@ -2,6 +2,7 @@ import sys, os, time, signal, json, psycopg2
 reload(sys)
 sys.setdefaultencoding('utf-8')
 import paho.mqtt.client as mqtt
+from datetime import datetime
 
 client = None
 mqtt_looping = False
@@ -22,14 +23,13 @@ print ("Connected!\n")
 
 def save_to_postgre(lamp_data):
     # get a connection, if a connect cannot be made an exception will be raised here
-    cursor.execute("INSERT INTO lamps (id, created_at, more) \
-	    VALUES(%s, %s, %s);", (lamp_data['id'], lamp_data['created_at'], json.dumps(lamp_data['more'])) )
+    cursor.execute("INSERT INTO lamps (id, created_at, counts) \
+	VALUES(%s, %s, %s);", (lamp_data['id'], datetime.now(), lamp_data['counts']))
     conn.commit()
     print "save Success\n"
 
 def save_data(payload):
     lamp_data = json.loads(payload)
-    print lamp_data['more']['type']
     save_to_postgre(lamp_data)
 
 def on_connect(mq, userdata, rc, _):
@@ -39,7 +39,6 @@ def on_connect(mq, userdata, rc, _):
 def on_message(mq, userdata, msg):
     print "topic: %s" % msg.topic
     print "payload: %s" % msg.payload
-    print "qos: %d" % msg.qos
     save_data(msg.payload)
 
 def mqtt_client_thread():
