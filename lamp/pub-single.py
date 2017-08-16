@@ -12,7 +12,6 @@ def json_serial(obj):
 
 TEMP = {
 	   'id': '1',
-	   'created_at': datetime.now(),
 	   'counts': '5'
 }
 
@@ -26,3 +25,5 @@ payload =  dumps(TEMP, default=json_serial)
 #client_id = "test"
 
 publish.single(TOPIC, payload, qos=1, hostname=BROKER_ADDRESS)
+print TOPIC
+print BROKER_ADDRESS

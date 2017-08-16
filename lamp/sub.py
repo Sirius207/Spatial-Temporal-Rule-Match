@@ -55,12 +55,14 @@ def mqtt_client_thread():
     client.on_message = on_message
 
     try:
-        client.connect("localhost")
+        client.connect(BROKER_ADDRESS)
     except:
         print "MQTT Broker is not online. Connect later."
 
     mqtt_looping = True
     print "Looping..."
+    print TOPIC
+    print BROKER_ADDRESS
 
     #mqtt_loop.loop_forever()
     cnt = 0
