@@ -180,7 +180,7 @@ def on_message(client, userdata, msg):
 		# Mcc Keys
 		MccKey = dict()
 		LampData = json.loads(msg.payload)
-		lampId = LampData['id']
+		lampId = str(LampData['id'])
 		Eid = str(time.time()).replace(".","") + '-' + lampId
 		Lon = float(LOCATION[lampId]['Lon'])
 		Lat = float(LOCATION[lampId]['Lat'])
