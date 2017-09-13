@@ -27,7 +27,6 @@ DistanceDict = dict()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, rc):
-		client.subscribe("test")
 		client.subscribe(TOPIC)
 
 def on_publish(client, userdata, mid):
