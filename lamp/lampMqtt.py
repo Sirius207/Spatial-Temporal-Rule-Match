@@ -139,7 +139,7 @@ def on_message(client, userdata, msg):
 			center = list()
 			center.append( (EventDict[mcc[0]]["Lon"] + EventDict[mcc[1]]["Lon"]) / 2 )
 			center.append( (EventDict[mcc[0]]["Lat"] + EventDict[mcc[1]]["Lat"]) / 2 )
-			print (center)
+			#print (center)
 			return center
 		else:
 			return CalMccCenterByThreePoints(mcc)
@@ -157,7 +157,7 @@ def on_message(client, userdata, msg):
 
 		center.append(centerLon)
 		center.append(centerLat)
-		print str(center[1]) + ',' + str(center[0])
+		#print str(center[1]) + ',' + str(center[0])
 		return center
 
 
@@ -257,7 +257,7 @@ def on_message(client, userdata, msg):
 						continue
 					Mcc[(y,x,Eid)] = set([y,x,Eid])	# 3-point Mcc
 
-		print ("KEVIN Eid : "+str(Eid))
+		#print ("KEVIN Eid : "+str(Eid))
 		#print "KEVIN DistanceDict : "
 		#print DistanceDict
 		#print "KEVIN NEIGHBER : "
@@ -326,12 +326,12 @@ def on_message(client, userdata, msg):
 		VALUES(%s, %s, %s);", (LampData['id'], datetime.datetime.now(), int(LampData['cnt'])))
 		conn.commit()
 
-		print (Eid)
+		#print (Eid)
 		for mcc in MccSet:
 			if (len(mcc) > POINT_COUNTS):
-				print ('Save to DB: ')
-				print (MccKey[mcc])
-				print (list(mcc))
+				#print ('Save to DB: ')
+				#print (MccKey[mcc])
+				#print (list(mcc))
 				# calculate the center of mcc
 				center = CalMccCenter(MccKey[mcc])
 				# save mcc to db
