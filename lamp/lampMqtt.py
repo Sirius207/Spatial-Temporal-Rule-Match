@@ -180,7 +180,7 @@ def on_message(client, userdata, msg):
 		# Mcc Keys
 		MccKey = dict()
 		LampData = json.loads(msg.payload)
-		lampId = LampData['id']
+		lampId = str(LampData['id'])
 		Eid = str(time.time()).replace(".","") + '-' + lampId
 		Lon = float(LOCATION[lampId]['Lon'])
 		Lat = float(LOCATION[lampId]['Lat'])
@@ -323,7 +323,7 @@ def on_message(client, userdata, msg):
 		EventDict[Eid]["Neighber"] = Neighber
 		EventDict[Eid]["Mcc"] = Mcc
 		cursor.execute("INSERT INTO lamps (id, created_at, counts) \
-		VALUES(%s, %s, %s);", (LampData['id'], datetime.datetime.now(), LampData['counts']))
+		VALUES(%s, %s, %s);", (LampData['id'], datetime.datetime.now(), int(LampData['cnt'])))
 		conn.commit()
 
 		print (Eid)
