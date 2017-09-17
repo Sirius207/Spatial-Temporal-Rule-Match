@@ -8,11 +8,11 @@ TOPIC = CONFIG['TOPIC']
 def json_serial(obj):
     if isinstance(obj, datetime):
         return obj.isoformat()
-    raise TypeError ("Type not serializable")
+    raise TypeError("Type not serializable")
 
 TEMP = {
-	   'id': '1',
-	   'counts': '5'
+	   'id': 'LAB170915-02',
+	   'cnt': '77'
 }
 
 # publish a message then disconnect.
@@ -25,5 +25,15 @@ payload =  dumps(TEMP, default=json_serial)
 #client_id = "test"
 
 publish.single(TOPIC, payload, qos=1, hostname=BROKER_ADDRESS)
-print TOPIC
-print BROKER_ADDRESS
+print (TOPIC)
+print (BROKER_ADDRESS)
+
+# for num in range(1,31):
+#     TEMP['cnt'] = num
+#     # publish a message then disconnect.
+#     payload =  dumps(TEMP, default=json_serial)
+#     publish.single(TOPIC, payload, qos=1, hostname=BROKER_ADDRESS)
+#     print (TOPIC)
+#     print (BROKER_ADDRESS)
+#     print (num)
+#     print ('\n')

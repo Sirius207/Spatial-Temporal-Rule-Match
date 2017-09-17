@@ -26,7 +26,7 @@ def save_to_postgre(lamp_data):
     cursor.execute("INSERT INTO lamps (id, created_at, counts) \
 	VALUES(%s, %s, %s);", (lamp_data['id'], datetime.now(), lamp_data['counts']))
     conn.commit()
-    print "save Success\n"
+    print ("save Success\n")
 
 def save_data(payload):
     lamp_data = json.loads(payload)
@@ -37,8 +37,8 @@ def on_connect(mq, userdata, rc, _):
     mq.subscribe(TOPIC + '/#')
 
 def on_message(mq, userdata, msg):
-    print "topic: %s" % msg.topic
-    print "payload: %s" % msg.payload
+    print ("topic: %s" % msg.topic)
+    print ("payload: %s" % msg.payload)
     save_data(msg.payload)
 
 def mqtt_client_thread():
@@ -57,12 +57,12 @@ def mqtt_client_thread():
     try:
         client.connect(BROKER_ADDRESS)
     except:
-        print "MQTT Broker is not online. Connect later."
+        print ("MQTT Broker is not online. Connect later.")
 
     mqtt_looping = True
-    print "Looping..."
-    print TOPIC
-    print BROKER_ADDRESS
+    print ("Looping...")
+    print (TOPIC)
+    print (BROKER_ADDRESS)
 
     #mqtt_loop.loop_forever()
     cnt = 0
@@ -77,7 +77,7 @@ def mqtt_client_thread():
                 time.sleep(1)
             cnt = 0
 
-    print "quit mqtt thread"
+    print ("quit mqtt thread")
     client.disconnect()
 
 def stop_all(*args):
@@ -91,5 +91,5 @@ if __name__ == '__main__':
 
     mqtt_client_thread()
 
-    print "exit program"
+    print ("exit program")
     sys.exit(0)
