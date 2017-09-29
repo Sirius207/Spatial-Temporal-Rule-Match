@@ -9,13 +9,7 @@ from math import radians, cos, sin, asin, sqrt
 from config import CONFIG
 BROKER_ADDRESS = CONFIG['BROKER_ADDRESS']
 TOPIC = CONFIG['TOPIC']
-TIME_RATE = CONFIG['TIME_RATE']
-DISTANCE = CONFIG['DISTANCE']
-TIMELINE = CONFIG['TIMELINE']
-POINT_COUNTS = CONFIG['POINT_COUNTS']
-ACTIVE_LIMIT = CONFIG['ACTIVE_LIMIT']
 
-from location import LOCATION
 
 from config import DBCONFIG
 HOST = DBCONFIG['HOST']
@@ -26,6 +20,7 @@ PASSWORD = DBCONFIG['PASSWORD']
 DistanceDict = dict()
 LampDict = dict()
 UpdatedAt = str(datetime.date.today())
+Location = dict()
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, rc):
@@ -168,7 +163,7 @@ def on_message(client, userdata, msg):
         return center
 
     if msg.topic == 'ncku/netdb/test':
-        print (str(msg.payload))
+        print(str(msg.payload))
     elif msg.topic == TOPIC:
         print(str(msg.payload))
         #####################################################
@@ -176,12 +171,12 @@ def on_message(client, userdata, msg):
         # Parse MQTT Data
         #####################################################
         D = DISTANCE
-        N = TIME_RATE
         # Initial
         global DistanceDict
         global LampDict
         global UpdatedAt
-        
+        global Location
+
         Neighbor = set()
 
         # Mcc Elements
@@ -191,15 +186,26 @@ def on_message(client, userdata, msg):
         MccKey = dict()
         LampData = json.loads(msg.payload)
         lampId = str(LampData['id'])
-        Lon = float(LOCATION[lampId]['Lon'])
-        Lat = float(LOCATION[lampId]['Lat'])
+
+        if lampId not in Location:
+            cursor.execute("SELECT lamp_id, lamp_location FROM lamps;")
+            lamps = cursor.fetchall()
+            for item in lamps:
+                Location[item[0]] = item[1]
+
+        if lampId not in Location:
+            print('id not exist')
+            return
+
+        Lon = float(Location[lampId][0])
+        Lat = float(Location[lampId][1])
         Time = str(datetime.date.today())
 
         #####################################################
         # Plus Lamp Count
         #####################################################
         NewActiveLamp = False
-
+        print('\n------\n')
         if lampId not in LampDict:
             LampDict[lampId] = dict()
             LampDict[lampId]["Lon"] = Lon
@@ -212,7 +218,6 @@ def on_message(client, userdata, msg):
             LampDict[lampId][Time] = 1
 
             print(LampDict[lampId])
-            print('\n')
         else:
             LampDict[lampId]["Count"] += 1
             LampDict[lampId][Time] += 1
@@ -220,9 +225,8 @@ def on_message(client, userdata, msg):
             if LampDict[lampId]["Count"] >= ACTIVE_LIMIT and not LampDict[lampId]["Active"]:
                 LampDict[lampId]["Active"] = True
                 NewActiveLamp = True
-            print('active')
+                print('now active')
             print(LampDict[lampId])
-            print('\n')
         #####################################################
         # Remove Old Counts When New Date
         # Add New Distance When New Lamp
@@ -273,7 +277,7 @@ def on_message(client, userdata, msg):
         #####################################################
         # Generate Mcc of New Lamp
         #####################################################
-        
+
         if NewActiveLamp:
             print('cal new mcc-----------------------------')
             print(NewActiveLamp)
@@ -396,6 +400,24 @@ conn = psycopg2.connect(conn_string)
 cursor = conn.cursor()
 print ("Connected!\n")
 
+
+##############################
+# Setup Mcc Rules
+##############################
+cursor.execute("SELECT timeline_upper_limit, distance_lower_limit, points_lower_limit, counts_lower_limit FROM lamp_mcc_rules;")
+Rules = cursor.fetchone()
+print('Rules:\nTime: {}\nDistance: {}\nPoints: {}\nCounts: {}'.format(Rules[0], Rules[1], Rules[2], Rules[3]))
+print(Rules)
+print('#########################\n')
+TIMELINE = Rules[0]
+DISTANCE = Rules[1]
+POINT_COUNTS = Rules[2]
+ACTIVE_LIMIT = Rules[3]
+
+
+##############################
+# Connect to MQTT
+##############################
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
