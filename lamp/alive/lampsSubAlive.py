@@ -20,14 +20,15 @@ def on_connect(client, userdata, rc):
 
 def on_message(client, userdata, msg):
     ''' update lamps state '''
-    LampData = json.loads(msg.payload)
-    if 'id' in LampData:
-        print(str(msg.payload))
-        print("message qos=", msg.qos)
-        lampId = str(LampData['id'])
-        cursor.execute("INSERT INTO lamps_alive (id, created_at) \
-            VALUES(%s, %s);", (LampData['id'], datetime.now()))
-        conn.commit()
+    print(str(msg.payload))
+    # LampData = json.loads(msg.payload)
+    # if 'id' in LampData:
+    #     print(str(msg.payload))
+    #     print("message qos=", msg.qos)
+        # lampId = str(LampData['id'])
+        # cursor.execute("INSERT INTO lamps_alive (id, created_at) \
+        #     VALUES(%s, %s);", (LampData['id'], datetime.now()))
+        # conn.commit()
 
 ########################################
 # Connect to DB

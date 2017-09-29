@@ -11,7 +11,7 @@ def json_serial(obj):
     raise TypeError("Type not serializable")
 
 TEMP = {
-	   'id': 'LAB170915-02',
+	   'id': 'KG0915-04',
 	   'cnt': '77'
 }
 
